@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Forecast Application</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+        
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        
+        input[type="text"]:focus {
+            border-color: #4CAF50;
+            outline: none;
+        }
+        
+        .submit-btn {
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+        }
+        
+        .submit-btn:hover {
+            background-color: #45a049;
+        }
+        
+        .error-message {
+            background-color: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .weather-result {
+            background-color: #d4edda;
+            color: #155724;
+            padding: 20px;
+            border-radius: 5px;
+            margin: 20px 0;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .weather-info {
+            margin: 10px 0;
+        }
+        
+        .weather-info strong {
+            display: inline-block;
+            width: 120px;
+        }
+        
+        .temperature {
+            font-size: 18px;
+            font-weight: bold;
+        }
+        
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            box-sizing: border-box;
+            resize: vertical;
+            min-height: 100px;
+            background-color: #f9f9f9;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Weather Forecast Application</h1>
+        
+        <!-- Error message display -->
+        <div th:if="${weatherData.hasError()}" class="error-message">
+            <strong>Error:</strong> <span th:text="${weatherData.errorMessage}"></span>
+        </div>
+        
+        <!-- Weather form -->
+        <form action="/weather" method="post">
+            <div class="form-group">
+                <label for="location">Enter Location:</label>
+                <input type="text" 
+                       id="location" 
+                       name="location" 
+                       placeholder="e.g., London, New York, Tokyo" 
+                       th:value="${location}"
+                       required>
+            </div>
+            
+            <button type="submit" class="submit-btn">Get Weather Forecast</button>
+        </form>
+        
+        <!-- Weather results display -->
+        <div th:if="${weatherData != null and !weatherData.hasError() and weatherData.location != null}">
+            <div class="weather-result">
+                <h3>Weather Information for <span th:text="${weatherData.location}"></span></h3>
+                
+                <div class="weather-info">
+                    <strong>Current:</strong> 
+                    <span class="temperature" th:text="${#numbers.formatDecimal(weatherData.currentTemp, 1, 1)} + '°C'"></span>
+                </div>
+                
+                <div class="weather-info">
+                    <strong>Minimum:</strong> 
+                    <span class="temperature" th:text="${#numbers.formatDecimal(weatherData.minTemp, 1, 1)} + '°C'"></span>
+                </div>
+                
+                <div class="weather-info">
+                    <strong>Maximum:</strong> 
+                    <span class="temperature" th:text="${#numbers.formatDecimal(weatherData.maxTemp, 1, 1)} + '°C'"></span>
+                </div>
+            </div>
+            
+            <!-- Read-only textarea for temperature display -->
+            <div class="form-group">
+                <label for="temperature-display">Temperature Details:</label>
+                <textarea id="temperature-display" 
+                          readonly
+                          th:text="'Location: ' + ${weatherData.location} + '&#10;Current Temperature: ' + ${#numbers.formatDecimal(weatherData.currentTemp, 1, 1)} + '°C&#10;Minimum Temperature: ' + ${#numbers.formatDecimal(weatherData.minTemp, 1, 1)} + '°C&#10;Maximum Temperature: ' + ${#numbers.formatDecimal(weatherData.maxTemp, 1, 1)} + '°C'">
+                </textarea>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
